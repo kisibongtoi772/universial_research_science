@@ -1,0 +1,41 @@
+{
+  "version": 1,
+  "skills": {
+    "literature-search-arxiv": {
+      "source": "google-deepmind/science-skills",
+      "sourceType": "github",
+      "skillPath": "skills/literature_search_arxiv/SKILL.md",
+      "computedHash": "48d7f42f881c008a4d404a3a9f7af462c924f62d2a318b339eb296b16a2c21d2"
+    },
+    "literature-search-europepmc": {
+      "source": "google-deepmind/science-skills",
+      "sourceType": "github",
+      "skillPath": "skills/literature_search_europepmc/SKILL.md",
+      "computedHash": "a31c0cf26efbae9926d885e00bcc740330bc65844cdd580ed319be9625038f56"
+    },
+    "literature-search-openalex": {
+      "source": "google-deepmind/science-skills",
+      "sourceType": "github",
+      "skillPath": "skills/literature_search_openalex/SKILL.md",
+      "computedHash": "2e0b5432d52ae4f2657cb3ee62c67c9ca4e44d8a558387c0be5cfc2d82c5b765"
+    },
+    "openfda-database": {
+      "source": "google-deepmind/science-skills",
+      "sourceType": "github",
+      "skillPath": "skills/openfda_database/SKILL.md",
+      "computedHash": "bd660f0feb3aa8a428f944b1734ec09db2b1d4c1086033a21644f48dafcbed58"
+    },
+    "predictingthepast": {
+      "source": "google-deepmind/science-skills",
+      "sourceType": "github",
+      "skillPath": "skills/predictingthepast/SKILL.md",
+      "computedHash": "eb850fa766a6e4c14227f607584af0c32f225b68c2abae0197c2ef4da9556cd7"
+    },
+    "science-agent": {
+      "source": "andyed/science-agent",
+      "sourceType": "github",
+      "skillPath": "skills/science-agent/SKILL.md",
+      "computedHash": "42717c38eb2bfed756b36af42c7ad334c3ae85b748f36b6e5dc9dee738b1bcb5"
+    }
+  }
+}
