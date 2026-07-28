@@ -45,7 +45,7 @@ class Orchestrator:
         
         # 2. Assign agents to tasks
         for task in plan.tasks.values():
-            self.assigner.assign_agent_to_task(task)
+            self.assigner.assign_agent_to_task(task, context={"session_id": session_id})
             
         # 3. Save Plan State to storage
         self._save_plan_state(plan)

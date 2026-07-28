@@ -58,6 +58,55 @@ class SkillRegistry:
                 executable=git_module.run_git_push
             )
             self.skills.append(git_skill)
+            
+        # Load python sandbox
+        sandbox_script = os.path.join(".agents", "skills", "builtin-python-sandbox", "scripts", "python_sandbox.py")
+        if os.path.exists(sandbox_script):
+            import importlib.util
+            spec = importlib.util.spec_from_file_location("builtin_python_sandbox", sandbox_script)
+            sandbox_module = importlib.util.module_from_spec(spec)
+            spec.loader.exec_module(sandbox_module)
+            
+            sandbox_skill = Skill(
+                name="builtin_python_sandbox",
+                description="Creates an isolated python environment using uv, installs dependencies, and runs python code.",
+                parameters_schema={
+                    "type": "object",
+                    "properties": {
+                        "session_id": {"type": "string", "description": "The current session ID"},
+                        "experiment_name": {"type": "string", "description": "Name for the experiment"},
+                        "code": {"type": "string", "description": "Python source code to execute"},
+                        "dependencies": {"type": "array", "items": {"type": "string"}, "description": "Pip packages to install"}
+                    },
+                    "required": ["session_id", "experiment_name", "code"]
+                },
+                executable=sandbox_module.run_python_sandbox
+            )
+            self.skills.append(sandbox_skill)
+
+        # Load report writer
+        report_script = os.path.join(".agents", "skills", "builtin-report-writer", "scripts", "report_writer.py")
+        if os.path.exists(report_script):
+            import importlib.util
+            spec = importlib.util.spec_from_file_location("builtin_report_writer", report_script)
+            report_module = importlib.util.module_from_spec(spec)
+            spec.loader.exec_module(report_module)
+            
+            report_skill = Skill(
+                name="builtin_report_writer",
+                description="Writes a markdown report to the designated session reports directory.",
+                parameters_schema={
+                    "type": "object",
+                    "properties": {
+                        "session_id": {"type": "string", "description": "The current session ID"},
+                        "report_name": {"type": "string", "description": "The name of the report file"},
+                        "content": {"type": "string", "description": "The full markdown content"}
+                    },
+                    "required": ["session_id", "report_name", "content"]
+                },
+                executable=report_module.write_report
+            )
+            self.skills.append(report_skill)
 
     def get_all_skills(self) -> List[Skill]:
         return self.skills

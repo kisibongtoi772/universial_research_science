@@ -3,15 +3,15 @@ import argparse
 import asyncio
 from rich.console import Console
 from rich.panel import Panel
-from ...core.ports.llm import LLMProvider
-from ...application.orchestrator import Orchestrator
-from ...application.planner import Planner
-from ...application.assigner import Assigner
-from ...application.messaging import MessageBus
-from ...infrastructure.storage.artifact_store import FileSystemArtifactStore
-from ...infrastructure.llm.gemini import GeminiLLMProvider
-from ...infrastructure.skills.registry import SkillRegistry
-from ...infrastructure.execution.runner import ExecutionRunner
+from ..core.ports.llm import LLMProvider
+from ..application.orchestrator import Orchestrator
+from ..application.planner import Planner
+from ..application.assigner import Assigner
+from ..application.messaging import MessageBus
+from ..infrastructure.storage.artifact_store import FileSystemArtifactStore
+from ..infrastructure.llm.gemini import GeminiLLMProvider
+from ..infrastructure.skills.registry import SkillRegistry
+from ..infrastructure.execution.runner import ExecutionRunner
 
 console = Console()
 
@@ -53,7 +53,7 @@ async def async_main():
             for task in plan.tasks.values():
                 if task.assigned_agent_id:
                     # Normally we'd load agent state, but here we rebuild it for simplicity
-                    agent = assigner.assign_agent_to_task(task)
+                    agent = assigner.assign_agent_to_task(task, context={"session_id": args.resume})
                     runner.register_agent(agent)
                     
             await runner.execute_plan(plan)

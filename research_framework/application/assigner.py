@@ -27,17 +27,22 @@ class Assigner:
         self.skill_registry = skill_registry
         self.llm = llm_provider
 
-    def assign_agent_to_task(self, task: Task) -> Agent:
+    def assign_agent_to_task(self, task: Task, context: dict = None) -> Agent:
         """
         Analyzes the task and builds an Agent equipped with the necessary role and skills.
         """
         # In a real scenario, we might use an LLM to select the skills.
         # Here we perform a simple heuristic or just assign all skills for demonstration.
         
+        context = context or {}
+        session_id = context.get("session_id", "unknown")
+        
         # Simplified:
         role = AgentRole(
             name=f"Specialist for {task.title}",
-            system_prompt=f"You are a specialist responsible for: {task.title}. Provide output matching: {task.expected_output}"
+            system_prompt=(f"You are a specialist responsible for: {task.title}. "
+                           f"Provide output matching: {task.expected_output}. "
+                           f"Your current Session ID is '{session_id}'. Use this ID when executing tools that require it.")
         )
         
         # In a robust system, we would match task description against skill descriptions
