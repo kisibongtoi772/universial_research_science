@@ -14,7 +14,7 @@ class Agent(BaseModel, ABC):
     skills: List[Skill] = Field(default_factory=list, description="Skills equipped to this agent")
     
     @abstractmethod
-    def execute_task(self, task: Task, context: Dict[str, Any]) -> Any:
+    async def execute_task(self, task: Task, context: Dict[str, Any]) -> Any:
         """
         Executes a given task. Needs to be implemented by concrete classes.
         """

@@ -7,6 +7,7 @@ class TaskStatus(str, Enum):
     IN_PROGRESS = "in_progress"
     COMPLETED = "completed"
     FAILED = "failed"
+    CANCELLED = "cancelled"
 
 class Task(BaseModel):
     id: str = Field(..., description="Unique identifier for the task")
@@ -25,3 +26,4 @@ class Task(BaseModel):
     status: TaskStatus = Field(default=TaskStatus.PENDING)
     assigned_agent_id: Optional[str] = Field(default=None)
     result_summary: Optional[str] = Field(default=None)
+    error_message: Optional[str] = Field(default=None, description="Reason for failure or cancellation")
