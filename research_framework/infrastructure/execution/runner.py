@@ -39,9 +39,22 @@ class ExecutionRunner:
             
         async with self.semaphore:
             print(f"--> Agent {agent.role.name} starting task: {task.title}")
+            
+            context = {"session_id": plan.session_id}
+            if task.requires_human_input:
+                task.status = TaskStatus.PAUSED_FOR_INPUT
+                await self._save_plan_state(plan)
+                
+                print(f"\n[HITL] Agent {agent.role.name} requires your input to proceed with '{task.title}'")
+                human_response = await asyncio.to_thread(input, "> ")
+                context["human_response"] = human_response
+                
+                task.status = TaskStatus.IN_PROGRESS
+                await self._save_plan_state(plan)
+                
             try:
                 # Actual async execution
-                await agent.execute_task(task, {"session_id": plan.session_id})
+                await agent.execute_task(task, context)
                 task.status = TaskStatus.COMPLETED
                 print(f"--> Task {task.title} completed.")
             except Exception as e:

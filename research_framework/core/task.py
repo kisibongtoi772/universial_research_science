@@ -5,6 +5,7 @@ from typing import List, Optional, Dict, Any
 class TaskStatus(str, Enum):
     PENDING = "pending"
     IN_PROGRESS = "in_progress"
+    PAUSED_FOR_INPUT = "paused_for_input"
     COMPLETED = "completed"
     FAILED = "failed"
     CANCELLED = "cancelled"
@@ -17,6 +18,9 @@ class Task(BaseModel):
     
     # Dependencies: List of Task IDs that must be completed before this task can start
     dependencies: List[str] = Field(default_factory=list)
+    
+    # Flags
+    requires_human_input: bool = Field(default=False, description="If true, pauses agent to request human input via CLI")
     
     # Context: Identifiers for artifacts this task has access to (read/write)
     input_artifacts: List[str] = Field(default_factory=list, description="IDs of artifacts to read from")
