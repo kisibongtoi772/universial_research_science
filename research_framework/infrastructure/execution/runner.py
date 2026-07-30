@@ -58,9 +58,15 @@ class ExecutionRunner:
                 task.status = TaskStatus.COMPLETED
                 print(f"--> Task {task.title} completed.")
             except Exception as e:
-                print(f"--> Task {task.title} failed: {e}")
-                task.status = TaskStatus.FAILED
-                task.error_message = str(e)
+                if task.current_retries < task.max_retries:
+                    task.current_retries += 1
+                    print(f"--> Task {task.title} failed: {e}. Retrying ({task.current_retries}/{task.max_retries})...")
+                    task.status = TaskStatus.PENDING
+                    task.error_message = f"Last error: {e}"
+                else:
+                    print(f"--> Task {task.title} permanently failed after {task.max_retries} retries: {e}")
+                    task.status = TaskStatus.FAILED
+                    task.error_message = str(e)
             
             await self._save_plan_state(plan)
 
