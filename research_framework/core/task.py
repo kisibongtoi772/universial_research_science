@@ -23,6 +23,7 @@ class Task(BaseModel):
     requires_human_input: bool = Field(default=False, description="If true, pauses agent to request human input via CLI")
     max_retries: int = Field(default=3, description="Maximum number of retries on failure")
     current_retries: int = Field(default=0, description="Current number of retries attempted")
+    timeout_seconds: Optional[int] = Field(default=None, description="Maximum execution time in seconds")
     
     # Context: Identifiers for artifacts this task has access to (read/write)
     input_artifacts: List[str] = Field(default_factory=list, description="IDs of artifacts to read from")

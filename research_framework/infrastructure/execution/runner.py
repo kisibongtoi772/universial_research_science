@@ -54,7 +54,10 @@ class ExecutionRunner:
                 
             try:
                 # Actual async execution
-                await agent.execute_task(task, context)
+                if task.timeout_seconds:
+                    await asyncio.wait_for(agent.execute_task(task, context), timeout=task.timeout_seconds)
+                else:
+                    await agent.execute_task(task, context)
                 task.status = TaskStatus.COMPLETED
                 print(f"--> Task {task.title} completed.")
             except Exception as e:
