@@ -95,6 +95,8 @@ class ExecutionRunner:
                 break
                 
             ready_tasks = plan.get_ready_tasks()
+            # Sort tasks by priority descending
+            ready_tasks.sort(key=lambda t: t.priority, reverse=True)
             
             for task in ready_tasks:
                 task.status = TaskStatus.IN_PROGRESS
