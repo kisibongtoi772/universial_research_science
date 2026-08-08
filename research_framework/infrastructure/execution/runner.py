@@ -1,5 +1,6 @@
 import asyncio
 from typing import Dict, Any, Callable
+from datetime import datetime, timezone
 from ...core.plan import Plan
 from ...core.task import Task, TaskStatus
 from ...application.messaging import MessageBus, Message
@@ -53,14 +54,17 @@ class ExecutionRunner:
                 await self._save_plan_state(plan)
                 
             try:
+                task.started_at = datetime.now(timezone.utc)
                 # Actual async execution
                 if task.timeout_seconds:
                     await asyncio.wait_for(agent.execute_task(task, context), timeout=task.timeout_seconds)
                 else:
                     await agent.execute_task(task, context)
                 task.status = TaskStatus.COMPLETED
+                task.finished_at = datetime.now(timezone.utc)
                 print(f"--> Task {task.title} completed.")
             except Exception as e:
+                task.finished_at = datetime.now(timezone.utc)
                 if task.current_retries < task.max_retries:
                     task.current_retries += 1
                     print(f"--> Task {task.title} failed: {e}. Retrying ({task.current_retries}/{task.max_retries})...")

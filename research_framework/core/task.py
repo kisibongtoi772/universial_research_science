@@ -1,6 +1,7 @@
 from enum import Enum
 from pydantic import BaseModel, Field
 from typing import List, Optional, Dict, Any
+from datetime import datetime
 
 class TaskStatus(str, Enum):
     PENDING = "pending"
@@ -35,3 +36,5 @@ class Task(BaseModel):
     assigned_agent_id: Optional[str] = Field(default=None)
     result_summary: Optional[str] = Field(default=None)
     error_message: Optional[str] = Field(default=None, description="Reason for failure or cancellation")
+    started_at: Optional[datetime] = Field(default=None, description="Timestamp when task execution started")
+    finished_at: Optional[datetime] = Field(default=None, description="Timestamp when task execution finished")
