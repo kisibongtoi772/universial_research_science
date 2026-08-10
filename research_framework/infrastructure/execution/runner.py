@@ -15,6 +15,18 @@ class ExecutionRunner:
         self.agents: Dict[str, Agent] = {}
         self.semaphore = asyncio.Semaphore(max_concurrency)
         self._state_lock = asyncio.Lock()
+        self.hooks = {"on_task_start": [], "on_task_complete": [], "on_task_fail": []}
+
+    def add_hook(self, event_name: str, callback: Callable):
+        if event_name in self.hooks:
+            self.hooks[event_name].append(callback)
+
+    async def _trigger_hooks(self, event_name: str, *args):
+        for callback in self.hooks.get(event_name, []):
+            if asyncio.iscoroutinefunction(callback):
+                await callback(*args)
+            else:
+                callback(*args)
 
     def register_agent(self, agent: Agent):
         self.agents[agent.id] = agent
@@ -55,6 +67,7 @@ class ExecutionRunner:
                 
             try:
                 task.started_at = datetime.now(timezone.utc)
+                await self._trigger_hooks("on_task_start", task, plan)
                 # Actual async execution
                 if task.timeout_seconds:
                     await asyncio.wait_for(agent.execute_task(task, context), timeout=task.timeout_seconds)
@@ -62,9 +75,11 @@ class ExecutionRunner:
                     await agent.execute_task(task, context)
                 task.status = TaskStatus.COMPLETED
                 task.finished_at = datetime.now(timezone.utc)
+                await self._trigger_hooks("on_task_complete", task, plan)
                 print(f"--> Task {task.title} completed.")
             except Exception as e:
                 task.finished_at = datetime.now(timezone.utc)
+                await self._trigger_hooks("on_task_fail", task, plan, e)
                 if task.current_retries < task.max_retries:
                     task.current_retries += 1
                     print(f"--> Task {task.title} failed: {e}. Retrying ({task.current_retries}/{task.max_retries})...")
